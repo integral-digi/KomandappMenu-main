@@ -2,16 +2,14 @@ import icon5 from "../../assets/homenew.svg";
 import icon6 from "../../assets/cart.svg";
 import icon7 from "../../assets/menulist.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../main";
 import "../../style.css";
 import "../../colors.css";
 
 interface appProps {
-  changeMenu?: any;
-  selectedMenu?: any;
-  // setType?: any;
-  // selectType?: number;
+  changeMenu?: (index: number) => void;
+  selectedMenu?: number;
 }
 
 export default function BottomBar({
@@ -19,9 +17,20 @@ export default function BottomBar({
   selectedMenu,
 }: appProps) {
   const { cart, setType, selectType, resname } = useContext(DataContext);
-  const [activeBar, setActiveBar] = useState(window.location.pathname.split("/")[3] === 'cart' ? 2 : 1);
+  const [activeBar, setActiveBar] = useState<number>(() =>
+    window.location.pathname.split("/")[3] === "cart" ? 2 : 1
+  );
   const navigate = useNavigate();
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window?.MSStream;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window?.MSStream;
+
+  useEffect(() => {
+    setActiveBar(window.location.pathname.split("/")[3] === "cart" ? 2 : 1);
+  }, [window.location.pathname]);
+
+  const handleNavigation = async (type: number, path: string) => {
+    if (setType) setType(type);
+    navigate(path);
+  };
 
   return (
     <div
@@ -37,41 +46,39 @@ export default function BottomBar({
         alignItems: "center",
         borderRadius: "5px 5px 0 0",
         padding: "0 5%",
-        zIndex: "2",
+        zIndex: 2,
       }}
     >
-      <Link to={`/restaurant/${resname}`}
-        className={"activeMenu"}
-        onClick={() => {
-            setType && setType(1);
-        }}
+      <Link
+        to={`/restaurant/${resname}`}
+        className="activeMenu"
+        onClick={() => handleNavigation(1, `/restaurant/${resname}`)}
       >
-        <img className="icon" src={icon5} />
-        {(activeBar == 1 && selectType == 1) && <div className="menubutton-underline"></div>}
+        <img className="icon" src={icon5} alt="Home" />
+        {activeBar === 1 && selectType === 1 && (
+          <div className="menubutton-underline"></div>
+        )}
       </Link>
       <div
-        className={"activeMenu"}
-        onClick={async () => {
-          setType(2);
-          navigate(`/restaurant/${resname}`);    
-        }}
+        className="activeMenu"
+        onClick={() => handleNavigation(2, `/restaurant/${resname}`)}
       >
-        <img className="icon" src={icon7} />
-        {(activeBar == 1 && selectType == 2) && <div className="menubutton-underline"></div>}
+        <img className="icon" src={icon7} alt="Menu" />
+        {activeBar === 1 && selectType === 2 && (
+          <div className="menubutton-underline"></div>
+        )}
       </div>
-      <div onClick={async () => {
-        
+      <div
+        className="activeMenu"
+        onClick={() => {
           const queryString = window.location.search;
           const urlParams = new URLSearchParams(queryString);
-          const s = urlParams.get('s');
-          if(s){
-            navigate(`/cart?s=${s}`);
-          } else {
-          navigate("/cart");  
-          }  
-        }} className={"activeMenu"} 
+          const s = urlParams.get("s");
+          const cartPath = s ? `/cart?s=${s}` : "/cart";
+          navigate(cartPath);
+        }}
       >
-        <img className="icon" src={icon6} />
+        <img className="icon" src={icon6} alt="Cart" />
         {cart?.length > 0 && (
           <div
             style={{
@@ -86,10 +93,10 @@ export default function BottomBar({
               padding: "0px 5px",
             }}
           >
-            {cart?.length}
+            {cart.length}
           </div>
         )}
-        {activeBar == 2 && <div className="menubutton-underline"></div>}
+        {activeBar === 2 && <div className="menubutton-underline"></div>}
       </div>
     </div>
   );
