@@ -5,16 +5,19 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "../../style.css";
 
-interface AppProps {
+interface appProps {
   videoKey: string;
   active: number | boolean;
   thumbnail: string;
 }
 
-export default function VideoPlayer({ videoKey, active, thumbnail }: AppProps) {
+export default function VideoPlayer({
+  videoKey,
+  active,
+  thumbnail,
+}: appProps) {
   const hlsUrl = `https://vz-bbe06792-04e.b-cdn.net/${videoKey}/playlist.m3u8`;
   const playerRef = useRef<ReactPlayer>(null);
-  const hlsRef = useRef<Hls | null>(null); // Memoize HLS instance
   const [showThumbnail, setShowThumbnail] = useState(true);
 
   useEffect(() => {
@@ -23,11 +26,11 @@ export default function VideoPlayer({ videoKey, active, thumbnail }: AppProps) {
       const timer = setTimeout(() => {
         setShowThumbnail(false);
         const player = playerRef.current?.getInternalPlayer();
-        if (player && Hls.isSupported()) {
-          hlsRef.current = new Hls();
-          hlsRef.current.loadSource(hlsUrl);
-          hlsRef.current.attachMedia(player.video);
-          hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (player) {
+          const hls = new Hls();
+          hls.loadSource(hlsUrl);
+          hls.attachMedia(playerRef.current?.getInternalPlayer().video);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
             player.play();
           });
         }
@@ -39,16 +42,12 @@ export default function VideoPlayer({ videoKey, active, thumbnail }: AppProps) {
     } else {
       setShowThumbnail(true);
       playerRef.current?.getInternalPlayer()?.pause();
-      if (hlsRef.current) {
-        hlsRef.current.destroy(); // Clean up HLS instance
-        hlsRef.current = null;
-      }
     }
   }, [active, hlsUrl]);
 
   return (
     <div>
-      {showThumbnail ? (
+      {active && showThumbnail ? (
         <img
           style={{
             position: "fixed",
@@ -58,13 +57,12 @@ export default function VideoPlayer({ videoKey, active, thumbnail }: AppProps) {
             overflow: "hidden",
           }}
           src={thumbnail}
-          alt="Video thumbnail"
         />
       ) : (
         <ReactPlayer
           ref={playerRef}
           url={hlsUrl}
-          playing={active === true} // Play only if active is true
+          playing={true}
           loop
           muted
           width="100%"
