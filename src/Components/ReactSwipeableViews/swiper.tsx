@@ -143,7 +143,7 @@ export default function MySwiper({ selectedMenu, setSelectedMenu }: appProps) {
         className="mySwiper swiper-h"
         spaceBetween={0}
         initialSlide={getInitial()}
-        onSlideChange={(swiper) => {
+        onSlideChange={(swiper: any) => {
           setAnimateText(true);
           setSelectedMenu(swiper.activeIndex + 1);
           changeCurrentCategory(swiper.activeIndex);
@@ -162,7 +162,7 @@ export default function MySwiper({ selectedMenu, setSelectedMenu }: appProps) {
               modules={[Pagination]}
               noSwipingSelector={".scrollableArea"}
               style={{ background: "#121212" }}
-              onSlideChange={(swiper) => {
+              onSlideChange={(swiper: any) => {
                 setActiveMenuDish((prev) => ({
                   ...prev,
                   [catIndex]: swiper.activeIndex,
