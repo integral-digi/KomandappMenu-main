@@ -1,6 +1,3 @@
-import icon1 from "../../assets/right-arrow.png";
-import icon2 from "../../assets/left-arrow.png";
-
 import { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -21,7 +18,7 @@ interface MenuItem {
 
 export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
-  const swiperRef = useRef<SwiperType | null>(null); // Correct typing for Swiper instance
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const { menu } = useContext(DataContext);
 
@@ -37,11 +34,10 @@ export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
     <Swiper
       onSwiper={setSwiper}
       className={
-        menu?.length < 5
+        (menu?.length ?? 0) < 5
           ? "mySwiper swiper-h menuBar2 onlyMobile shaded-section menuBar2-center"
           : "mySwiper swiper-h menuBar2 onlyMobile shaded-section"
       }
-      ref={swiperRef}
       slidesPerView={5}
       modules={[Navigation]}
       navigation={true}
@@ -70,7 +66,7 @@ export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
           >
             <img
               className={isIOS ? "menuicon-ios" : "menuicon"}
-              src={"https://admin.komandapp.com/" + item?.icon}
+              src={"https://admin.komandapp.com/" + item.icon}
               alt={`Menu icon ${index + 1}`}
             />
           </div>

@@ -1,9 +1,5 @@
-import icon1 from "../../assets/right-arrow.png";
-import icon2 from "../../assets/left-arrow.png";
-
 import { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css/pagination";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Navigation } from "swiper/modules";
@@ -22,13 +18,13 @@ interface MenuItem {
 
 export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
-  const swiperRef = useRef<SwiperType | null>(null); // UseRef with correct type
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const { menu } = useContext(DataContext);
 
   useEffect(() => {
     if (swiper) {
-      swiper.slideTo(selectedMenu - 1, 0, false); // Slide to desired position, no transition
+      swiper.slideTo(selectedMenu - 1, 0, false);
       console.log("Swiped to selected menu index:", selectedMenu);
     }
   }, [swiper, selectedMenu]);
@@ -37,11 +33,11 @@ export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
     <Swiper
       onSwiper={setSwiper}
       className={
-        menu?.length < 5
+        (menu?.length ?? 0) < 5
           ? "mySwiper swiper-h menuBar2 onlyMobile shaded-section menuBar2-center"
           : "mySwiper swiper-h menuBar2 onlyMobile shaded-section"
       }
-      ref={swiperRef} // Assign Swiper instance to useRef
+      ref={swiperRef}
       slidesPerView={5}
       modules={[Navigation]}
       navigation={true}
@@ -59,7 +55,7 @@ export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
         justifyContent: "center",
         borderRadius: "5px 5px 0 0",
         padding: "0 5%",
-        zIndex: "2",
+        zIndex: 2,
       }}
     >
       {menu?.map((item: MenuItem, index: number) => (
@@ -68,9 +64,9 @@ export default function BottomBar2({ changeMenu, selectedMenu }: AppProps) {
             className={selectedMenu === index + 1 ? "activeMenu2" : "menu"}
             onClick={() => changeMenu && changeMenu(index + 1)}
           >
-            <img
+            <Image
               className="menuicon"
-              src={"https://admin.komandapp.com/" + item?.icon}
+              src={`https://admin.komandapp.com/${item.icon}`}
               alt={`Menu icon ${index + 1}`}
             />
           </div>
