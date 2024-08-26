@@ -7,6 +7,7 @@ import CheckoutPage from "./CheckoutPage";
 import "./style.css";
 import { HexToCssConfiguration, hexToCSSFilter } from 'hex-to-css-filter';
 import ScannerPage from "./ScannerPage";
+import axios from "axios";
 
 interface RestaurantData {
   logo?: string;
@@ -68,10 +69,10 @@ function MainApp() {
       setCart(JSON.parse(storedCart));
     }
 
-    fetch(`https://admin.komandapp.com/api/v2/resturant/${storedResName}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const restaurantData = data?.restaurant_data?.restaurant_data;
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`https://admin.komandapp.com/api/v2/resturant/${storedResName}`);
+        const restaurantData = response.data?.restaurant_data?.restaurant_data;
 
         setMenu(restaurantData?.categories || []);
         setRestaurant({ logo: restaurantData?.icon });
@@ -96,8 +97,12 @@ function MainApp() {
         };
         const cssFilter = hexToCSSFilter(restaurantData?.primary_color || '#000', config);
         document.documentElement.style.setProperty('--tertiary-color', cssFilter.filter || '');
-      })
-      .catch((error: any) => console.error("Error fetching restaurant data:", error));
+      } catch (error) {
+        console.error("Error fetching restaurant data:", error);
+      }
+    };
+
+    fetchData();
   }, [resname]);
 
   return (
