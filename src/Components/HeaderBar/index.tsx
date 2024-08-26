@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { DataContext } from "../../main";
 import search from "../../assets/search.png";
+import "../../style.css";
 import "../../colors.css";
 
 declare global {
